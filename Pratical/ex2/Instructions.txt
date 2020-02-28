@@ -1,0 +1,11 @@
+1. Create class and JS file(or copy MyDiamond.js)
+2. Add to main.js (add comma)
+3. Init in MyScene
+4. display() (at end of myscene)
+
+
+
+Add to interface:
+1.Add to GUI
+2.Add to the MyScene
+3.to do something
