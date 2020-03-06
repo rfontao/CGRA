@@ -78,7 +78,9 @@ class MyScene extends CGFscene {
         this.pushMatrix();
 
         this.rotate(Math.PI / 2, 1, 0, 0);
+        this.rotate(Math.PI / 2, 0, 0, 1);
         this.translate(5.5,-4.5,0);
+
 
 		if (this.showTangram) {
             this.pushMatrix();
