@@ -21,14 +21,16 @@ class MyScene extends CGFscene {
 
 		//Initialize scene objects
 		this.axis = new CGFaxis(this);
-		this.tangram = new MyTangram(this);
+        this.tangram = new MyTangram(this);
+        this.cube = new MyUnitCube(this);
 		
 
 		//Objects connected to MyInterface
 		this.displayAxis = true;
 		this.scaleFactor = 1;
 
-		this.showTangram = true;
+        this.showTangram = true;
+        this.showCube = true;
 	}
 	initLights() {
 		this.lights[0].setPosition(15, 2, 5, 1);
@@ -37,7 +39,7 @@ class MyScene extends CGFscene {
 		this.lights[0].update();
 	}
 	initCameras() {
-        this.camera = new CGFcamera(0.4, 0.1, 500, vec3.fromValues(0, 0.3, 20), vec3.fromValues(0, 0.3, 0));
+        this.camera = new CGFcamera(0.4, 0.1, 500, vec3.fromValues(0, 0.8, 20), vec3.fromValues(0, 0.8, 0));
         //this.camera = new CGFcamera(0.4, 0.1, 500, vec3.fromValues(15, 15, 15), vec3.fromValues(0, 0, 0));
 	}
 	setDefaultAppearance() {
@@ -72,10 +74,29 @@ class MyScene extends CGFscene {
                 
 
 		// ---- BEGIN Primitive drawing section
+        
+        this.pushMatrix();
+
+        this.rotate(Math.PI / 2, 1, 0, 0);
+        this.translate(5.5,-4.5,0);
 
 		if (this.showTangram) {
-			this.tangram.display();
-                }
+            this.pushMatrix();
+            this.tangram.display();
+            this.popMatrix();
+        }
+
+        if (this.showCube) {
+            this.pushMatrix();
+            this.translate(-1.5,1.5,-0.51);
+            this.scale(8,6,1);
+            this.cube.display();
+            this.popMatrix();
+        }
+
+
+
+        this.popMatrix();
 
 		// ---- END Primitive drawing section
 	}
