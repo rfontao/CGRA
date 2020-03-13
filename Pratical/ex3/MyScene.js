@@ -25,11 +25,13 @@ class MyScene extends CGFscene {
         this.plane = new MyPlane(this, 5);
         this.cone = new MyCone(this, 3, 1);
         this.pyramid = new MyPyramid(this, 3, 1);
+        this.cube = new MyUnitCube(this);
+        this.tangram = new MyTangram(this);
         
-        this.objects = [this.plane, this.pyramid, this.cone];
+        this.objects = [this.plane, this.pyramid, this.cone,this.tangram,this.cube];
 
         // Labels and ID's for object selection on MyInterface
-        this.objectIDs = { 'Plane': 0 , 'Pyramid': 1, 'Cone': 2};
+        this.objectIDs = { 'Plane': 0 , 'Pyramid': 1, 'Cone': 2,'Tangram': 3,'Cube': 4 };
 
         //Other variables connected to MyInterface
         this.selectedObject = 0;
@@ -39,9 +41,14 @@ class MyScene extends CGFscene {
         this.objectComplexity = 0.5;
         this.scaleFactor = 2.0;
 
+        this.ambientRed = 0.3;
+        this.ambientGreen = 0.3;
+        this.ambientBlue = 0.3;
+        this.ambientAlpha = 1.0;
+
     }
     initLights() {
-        this.setGlobalAmbientLight(0.3, 0.3, 0.3, 1.0);
+        this.setGlobalAmbientLight(this.ambientRed, this.ambientGreen, this.ambientBlue, this.ambientAlpha);
 
         this.lights[0].setPosition(2.0, 2.0, -1.0, 1.0);
         this.lights[0].setDiffuse(1.0, 1.0, 1.0, 1.0);
@@ -171,6 +178,11 @@ class MyScene extends CGFscene {
         
         this.objects[this.selectedObject].display();
         this.popMatrix();
+
+        
+
+        this.setGlobalAmbientLight(this.ambientRed, this.ambientGreen, this.ambientBlue, this.ambientAlpha);
+
         // ---- END Primitive drawing section
     }
 }

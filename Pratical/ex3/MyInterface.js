@@ -57,6 +57,18 @@ class MyInterface extends CGFinterface {
         f2.addColor(this.scene.customMaterialValues,'Specular').onChange(this.scene.updateCustomMaterial.bind(this.scene));
         f2.add(this.scene.customMaterialValues,'Shininess', 0, 100).onChange(this.scene.updateCustomMaterial.bind(this.scene));
 
+
+
+        //Folder for ambient color
+        var f3 = this.gui.addFolder('Ambient color');
+
+        f3.add(this.scene, 'ambientRed', 0.0, 1.0).name('Red');
+        f3.add(this.scene, 'ambientGreen', 0.0, 1.0).name('Green');
+        f3.add(this.scene, 'ambientBlue', 0.0, 1.0).name('Blue');
+        f3.add(this.scene, 'ambientAlpha', 0.0, 1.0).name('Alpha');
+
+
+
         return true;
     }
 
