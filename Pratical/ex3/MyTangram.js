@@ -71,4 +71,20 @@ class MyTangram extends CGFobject {
 
         }
 
+        enableNormalViz() {
+                this.triangle.enableNormalViz();
+                this.triangleBig.enableNormalViz();
+                this.triangleSmall.enableNormalViz();
+                this.square.enableNormalViz();
+                this.parallelogram.enableNormalViz();
+        }
+
+        disableNormalViz() {
+                this.triangle.disableNormalViz();
+                this.triangleBig.disableNormalViz();
+                this.triangleSmall.disableNormalViz();
+                this.square.disableNormalViz();
+                this.parallelogram.disableNormalViz();         
+        }
+
 }

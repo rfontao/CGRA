@@ -24,11 +24,11 @@ class MyUnitCube extends CGFobject {
 
 
             //Used for normals
-            0.5,  -0.5, -0.5,	//1
+            0.5,  -0.5,  0.5,	//0
             -0.5, -0.5,  0.5,   //3
             0.5,   0.5,  0.5,	//4
             -0.5,  0.5,  0.5,   //7
-            0.5,  -0.5,  0.5,	//0
+            0.5,  -0.5, -0.5,	//1
 			-0.5, -0.5, -0.5,	//2
             0.5,   0.5, -0.5,	//5
             -0.5,  0.5, -0.5,	//6
@@ -63,7 +63,7 @@ class MyUnitCube extends CGFobject {
             this.normals.push(0,1,0);
         }
         for(let i = 0;i < 4; ++i){
-            this.normals.push(0,0,1); 
+            this.normals.push(0,0,1);
         }
         for(let i = 0;i < 4; ++i){
             this.normals.push(0,0,-1);
