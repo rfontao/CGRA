@@ -21,9 +21,14 @@ class MyInterface extends CGFinterface {
 
         // Checkbox to disable Quad rendering
         this.gui.add(this.scene, 'displayQuad').name('Display Quad');
-
-        // Checkbox to disable Quad rendering
+        // Checkbox to disable Tangram rendering
         this.gui.add(this.scene, 'displayTangram').name('Display Tangram');
+        // Checkbox to disable Cube rendering
+        this.gui.add(this.scene, 'displayCube').name('Display Minecraft');
+
+        // Checkbox to toggle texture nearest filtering
+        // BECAUSE BUGS, ONLY WORKS FOR THE MINECRAFT CUBE
+        this.gui.add(this.scene, 'nearestFiltering').name('Toggle nearest filtering');
 
         //Dropdown for textures
         this.gui.add(this.scene, 'selectedTexture', this.scene.textureIds).name('Selected Texture').onChange(this.scene.updateAppliedTexture.bind(this.scene));

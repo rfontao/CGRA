@@ -25,6 +25,7 @@ class MyScene extends CGFscene {
         this.axis = new CGFaxis(this);
         this.quad = new MyQuad(this);
         this.tangram = new MyTangram(this);
+        this.cubeQuad = new MyUnitCubeQuad(this);
 
         //------ Applied Material
         this.quadMaterial = new CGFappearance(this);
@@ -49,8 +50,11 @@ class MyScene extends CGFscene {
         this.wrapS = 0;
         this.wrapT = 0;
 
+        this.nearestFiltering = false;
+
         this.displayQuad = false;
-        this.displayTangram = true;
+        this.displayTangram = false;
+        this.displayCube = true;
 
         this.textures = [this.texture1, this.texture2, this.texture3];
         this.texCoords = [0.0, 1.0, 1.0, 1.0, 0.0, 0.0, 1.0, 0.0];
@@ -117,20 +121,27 @@ class MyScene extends CGFscene {
 
         // ---- BEGIN Primitive drawing section
 
+        // THIS STUFF HERE SHOULD WORK BUT IT DOES NOT SO YES
+        // So it'll stay commented until the professor gives us further explanations
+        // if (this.nearestFiltering) {
+        //     // Default texture filtering in WebCGF is LINEAR. 
+        //     // Uncomment next line for NEAREST when magnifying, or 
+        //     // add a checkbox in the GUI to alternate in real time
+            
+        //     this.gl.texParameteri(this.gl.TEXTURE_2D, this.gl.TEXTURE_MAG_FILTER, this.gl.NEAREST);
+        // }
+
         if (this.displayQuad) {
             this.quadMaterial.apply();
-
-            // Default texture filtering in WebCGF is LINEAR. 
-            // Uncomment next line for NEAREST when magnifying, or 
-            // add a checkbox in the GUI to alternate in real time
-            
-            // this.gl.texParameteri(this.gl.TEXTURE_2D, this.gl.TEXTURE_MAG_FILTER, this.gl.NEAREST);
-
             this.quad.display();
         }
 
         if (this.displayTangram) {
             this.tangram.display();
+        }
+
+        if (this.displayCube) {
+            this.cubeQuad.display();
         }
 
         // ---- END Primitive drawing section
