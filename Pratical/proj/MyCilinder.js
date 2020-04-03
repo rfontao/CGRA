@@ -26,8 +26,8 @@ class MyCilinder extends CGFobject {
       var thetaInc = (2 * Math.PI) / this.slices;
       var verts = this.slices + 1;
 
-      var tex_s = 0;
-      var texInc = 1 / verts;
+      var tex_s = 1;
+      var texInc = 1 / this.slices;
 
       for (let angle = 0; angle <= verts; angle++) {
         var vec = [Math.cos(theta), 0, Math.sin(theta)];
@@ -51,9 +51,9 @@ class MyCilinder extends CGFobject {
         }
 
         theta += thetaInc;
-        tex_s += texInc;
+        tex_s -= texInc;
       }
-    
+
       this.primitiveType = this.scene.gl.TRIANGLES;
       this.initGLBuffers();
     }

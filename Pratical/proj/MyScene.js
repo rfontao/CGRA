@@ -25,13 +25,34 @@ class MyScene extends CGFscene {
 
         //Initialize scene objects
         this.axis = new CGFaxis(this);
-        this.incompleteSphere = new MySphere(this, 16, 8);
+        this.sphere = new MySphere(this, 16, 8);
         this.cilinder = new MyCilinder(this, 16);
+        this.cubemap = new MyUnitCube(this);
 
         // Initialize textures (and appearances)
         this.earthTexture = new CGFtexture(this, "images/earth.jpg");
-        this.cilinderAppearance = new CGFappearance(this);
-        this.cilinderAppearance.setTexture(this.earthTexture);
+        this.earthAppearance = new CGFappearance(this);
+        this.earthAppearance.setTexture(this.earthTexture);
+
+        this.cubemapFilenames = [
+            "images/skybox/cubemap.png",
+            "images/skybox/sunset_cubemap.png",
+            "images/skybox/bridge_cubemap.png",
+            "images/skybox/underground_site_cubemap.png"
+        ];
+        this.cubemapTexture;
+        
+        // List for the Interface
+        this.cubemapTextures = {
+            "Skybox": 0,
+            "Sunset": 1,
+            "Bridge": 2,
+            "Underground": 3
+        }
+        this.selectedCubemapTex = 0;
+
+        this.cubemapAppearance = new CGFappearance(this);
+        this.onSelectedCubemapTexture(0);
 
         //Objects connected to MyInterface
         this.displayAxis = true;
@@ -56,6 +77,11 @@ class MyScene extends CGFscene {
         //To be done...
     }
 
+    onSelectedCubemapTexture(v) {
+        this.cubemapTexture = new CGFtexture(this, this.cubemapFilenames[v]);
+        this.cubemapAppearance.setTexture(this.cubemapTexture);
+    }
+
     display() {
         // ---- BEGIN Background, camera and axis setup
         // Clear image and depth buffer everytime we update the scene
@@ -75,9 +101,16 @@ class MyScene extends CGFscene {
 
         // ---- BEGIN Primitive drawing section
 
-        this.cilinderAppearance.apply();
+        // Cubemap
+        this.pushMatrix();
+        this.scale(50, 50, 50);
+        this.cubemapAppearance.apply();
+        this.cubemap.display();
+        this.popMatrix();
+
         //This sphere does not have defined texture coordinates
-        this.incompleteSphere.display();
+        this.earthAppearance.apply();
+        this.sphere.display();
 
         // this.cilinder.display();
 

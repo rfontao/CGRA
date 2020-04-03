@@ -17,6 +17,7 @@ class MyInterface extends CGFinterface {
         var obj = this;
 
         //Checkbox element in GUI
+        this.gui.add(this.scene, 'selectedCubemapTex', this.scene.cubemapTextures).onChange(this.scene.onSelectedCubemapTexture.bind(this.scene)).name('Cubemap Texture');
         this.gui.add(this.scene, 'displayAxis').name('Display Axis');
 
         return true;

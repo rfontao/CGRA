@@ -79,8 +79,6 @@ class MySphere extends CGFobject {
       tex_t += texInc_t;
     }
 
-    console.log(tex_s, tex_t);
-
     this.primitiveType = this.scene.gl.TRIANGLES;
     this.initGLBuffers();
   }
