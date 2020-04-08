@@ -28,6 +28,7 @@ class MyScene extends CGFscene {
         this.sphere = new MySphere(this, 16, 8);
         this.cilinder = new MyCilinder(this, 16);
         this.cubemap = new MyUnitCube(this);
+        this.vehicle = new MyVehicle(this);
 
         // Initialize textures (and appearances)
         this.earthTexture = new CGFtexture(this, "images/earth.jpg");
@@ -42,7 +43,7 @@ class MyScene extends CGFscene {
         ];
         this.cubemapTexture;
         
-        // List for the Interface
+        // Interface
         this.cubemapTextures = {
             "Skybox": 0,
             "Sunset": 1,
@@ -54,27 +55,63 @@ class MyScene extends CGFscene {
         this.cubemapAppearance = new CGFappearance(this);
         this.onSelectedCubemapTexture(0);
 
+        this.speedFactor = 1;
+        this.turnRadius = 1;
+        this.scaleFactor = 1;
+
         //Objects connected to MyInterface
         this.displayAxis = true;
     }
+
     initLights() {
         this.lights[0].setPosition(15, 2, 5, 1);
         this.lights[0].setDiffuse(1.0, 1.0, 1.0, 1.0);
         this.lights[0].enable();
         this.lights[0].update();
     }
+
     initCameras() {
         this.camera = new CGFcamera(0.4, 0.1, 500, vec3.fromValues(15, 15, 15), vec3.fromValues(0, 0, 0));
     }
+
     setDefaultAppearance() {
         this.setAmbient(0.2, 0.4, 0.8, 1.0);
         this.setDiffuse(0.2, 0.4, 0.8, 1.0);
         this.setSpecular(0.2, 0.4, 0.8, 1.0);
         this.setShininess(10.0);
     }
+
     // called periodically (as per setUpdatePeriod() in init())
     update(t){
         //To be done...
+        this.checkKeys();
+
+        this.vehicle.update();
+    }
+
+    checkKeys() {
+
+        // Check for key codes e.g. in https://ketcode.info/
+        if (this.gui.isKeyPressed("KeyW")) {
+            this.vehicle.accelerate(0.04 * this.speedFactor);
+        }
+
+        if (this.gui.isKeyPressed("KeyS")) {
+            this.vehicle.accelerate(-0.025 * this.speedFactor);
+        }
+
+        if (this.gui.isKeyPressed("KeyA")) {
+            this.vehicle.turn(0.1 * this.turnRadius);
+        }
+
+        if (this.gui.isKeyPressed("KeyD")) {
+            this.vehicle.turn(-0.1 * this.turnRadius);
+        }
+
+        if (this.gui.isKeyPressed("KeyR")) {
+            this.vehicle.reset();
+        }
+
     }
 
     onSelectedCubemapTexture(v) {
@@ -101,6 +138,9 @@ class MyScene extends CGFscene {
 
         // ---- BEGIN Primitive drawing section
 
+        this.pushMatrix();
+        this.scale(this.scaleFactor,this.scaleFactor,this.scaleFactor);
+
         // Cubemap
         this.pushMatrix();
         this.scale(50, 50, 50);
@@ -108,11 +148,15 @@ class MyScene extends CGFscene {
         this.cubemap.display();
         this.popMatrix();
 
+        this.vehicle.display();
+
         //This sphere does not have defined texture coordinates
-        this.earthAppearance.apply();
-        this.sphere.display();
+        // this.earthAppearance.apply();
+        // this.sphere.display();
 
         // this.cilinder.display();
+
+        this.popMatrix();
 
         // ---- END Primitive drawing section
     }
