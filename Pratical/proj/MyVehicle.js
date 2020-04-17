@@ -141,7 +141,7 @@ class MyVehicle extends CGFobject {
         this.scene.popMatrix();
     }
 
-    displayPropeller(){
+    displaySinglePropeller(){
         this.scene.pushMatrix();
         this.scene.scale(0.08, 0.08, 0.2);
         this.sphere.display();
@@ -154,56 +154,61 @@ class MyVehicle extends CGFobject {
         this.scene.popMatrix();
     }
 
-    displayDeck(){
-        
-        // TODO: Refactor this
+    displayPropellers() {
         this.scene.pushMatrix();
-        this.scene.translate(0, -0.75, -0.6);
+        this.scene.translate(0.3, -0.15, -0.65);
+        this.displaySinglePropeller();
+        this.scene.popMatrix();
+        this.scene.pushMatrix();
+        this.scene.translate(-0.3, -0.15, -0.65);
+        this.displaySinglePropeller();
+        this.scene.popMatrix();
+    }
+
+    displayGondola() {
+        // Cilinder
+        this.scene.pushMatrix();
+        this.scene.translate(0, 0, -0.6);
         this.scene.rotate(Math.PI / 2, 1, 0, 0);
         this.scene.scale(0.25, 1.4, 0.25);
         this.cilinder.display();
         this.scene.popMatrix();
-
-        this.scene.pushMatrix();
         
-        this.scene.translate(0, -0.75, 0);
+        // Sphere 1
         this.scene.pushMatrix();
         this.scene.translate(0, 0, -0.6);
         this.scene.scale(0.25, 0.25, 0.25);
         this.sphere.display();
         this.scene.popMatrix();
+        
+        // Sphere 2
         this.scene.pushMatrix();
         this.scene.translate(0, 0, 0.8);
         this.scene.scale(0.25, 0.25, 0.25);
         this.sphere.display();
         this.scene.popMatrix();
+    }
+
+    displayDeck(){
+        this.scene.pushMatrix();
+        this.scene.translate(0, -0.75, 0);
+
+        this.displayGondola();
+        this.displayPropellers();
 
         this.scene.popMatrix();
-
-        // Proppellers
-        this.scene.pushMatrix();
-        this.scene.translate(0.3, -0.85, -0.65);
-        this.displayPropeller();
-        this.scene.popMatrix();
-        this.scene.pushMatrix();
-        this.scene.translate(-0.3, -0.85, -0.65);
-        this.displayPropeller();
-        this.scene.popMatrix();
-        // End propellers
     }
 
     display(){
         this.scene.pushMatrix();
 
-        // Begin Movement
+        // Movement
         this.scene.translate(...this.position);
         this.scene.rotate(this.curAngle, 0, 1, 0);
-        // End Movement
-        
-        // Main display starts
+
+        // Blimp
         this.displayHull();
         this.displayDeck();
-        // Main display ends
 
         this.scene.popMatrix();
     }
