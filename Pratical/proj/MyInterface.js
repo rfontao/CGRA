@@ -18,6 +18,7 @@ class MyInterface extends CGFinterface {
 
         //Checkbox element in GUI
         this.gui.add(this.scene, 'displayAxis').name('Display Axis');
+        this.gui.add(this.scene, 'engineVersion', this.scene.engineVersions).onChange(this.scene.onSelectedEngineVersion.bind(this.scene)).name('Engine Version');
         this.gui.add(this.scene, 'selectedCubemapTex', this.scene.cubemapTextures).onChange(this.scene.onSelectedCubemapTexture.bind(this.scene)).name('Cubemap Texture');
         this.gui.add(this.scene, 'speedFactor', 0.1, 3).name('Speed factor');
         this.gui.add(this.scene, 'turnRadius', 0.1, 2).name('Turning radius');

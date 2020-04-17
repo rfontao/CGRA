@@ -55,12 +55,29 @@ class MyScene extends CGFscene {
         this.cubemapAppearance = new CGFappearance(this);
         this.onSelectedCubemapTexture(0);
 
+        this.DEFAULT_ENGINE = 0;
+        this.IMPROVED_ENGINE = 1;
+        this.engineVersion = 1;
+        this.engineVersions = {
+            "Default engine": 0,
+            "Improved engine": 1
+        }
+
         this.speedFactor = 1;
         this.turnRadius = 1;
         this.scaleFactor = 1;
 
         //Objects connected to MyInterface
         this.displayAxis = true;
+    }
+
+    onSelectedCubemapTexture(v) {
+        this.cubemapTexture = new CGFtexture(this, this.cubemapFilenames[v]);
+        this.cubemapAppearance.setTexture(this.cubemapTexture);
+    }
+
+    onSelectedEngineVersion(v) {
+        this.vehicle.onEngineChange(v);
     }
 
     initLights() {
@@ -71,7 +88,7 @@ class MyScene extends CGFscene {
     }
 
     initCameras() {
-        this.camera = new CGFcamera(0.4, 0.1, 500, vec3.fromValues(15, 15, 15), vec3.fromValues(0, 0, 0));
+        this.camera = new CGFcamera(0.4, 0.1, 500, vec3.fromValues(15, 25, 15), vec3.fromValues(0, 10, 0));
     }
 
     setDefaultAppearance() {
@@ -86,7 +103,7 @@ class MyScene extends CGFscene {
         //To be done...
         this.checkKeys();
 
-        this.vehicle.update();
+        this.vehicle.update(t);
     }
 
     checkKeys() {
@@ -114,11 +131,6 @@ class MyScene extends CGFscene {
 
     }
 
-    onSelectedCubemapTexture(v) {
-        this.cubemapTexture = new CGFtexture(this, this.cubemapFilenames[v]);
-        this.cubemapAppearance.setTexture(this.cubemapTexture);
-    }
-
     display() {
         // ---- BEGIN Background, camera and axis setup
         // Clear image and depth buffer everytime we update the scene
@@ -141,20 +153,14 @@ class MyScene extends CGFscene {
         this.pushMatrix();
         this.scale(this.scaleFactor,this.scaleFactor,this.scaleFactor);
 
+        this.vehicle.display();
+
         // Cubemap
         this.pushMatrix();
         this.scale(50, 50, 50);
         this.cubemapAppearance.apply();
         this.cubemap.display();
         this.popMatrix();
-
-        this.vehicle.display();
-
-        //This sphere does not have defined texture coordinates
-        // this.earthAppearance.apply();
-        // this.sphere.display();
-
-        // this.cilinder.display();
 
         this.popMatrix();
 

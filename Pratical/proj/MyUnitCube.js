@@ -8,7 +8,10 @@ class MyUnitCube extends CGFobject {
 		super(scene);
 		this.initBuffers();
 	}
-	
+    
+    // TODO: Passar a ser MyCubemap e ter tamanho 50, com a normal normalizada
+    // Fazer rotate de 90º para dar fix ao "front"
+    
 	initBuffers() {
 
         this.vertices = [];

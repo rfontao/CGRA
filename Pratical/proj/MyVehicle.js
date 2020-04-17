@@ -3,96 +3,193 @@
 * @constructor
 */
 class MyVehicle extends CGFobject {
-    constructor(scene, slices = 5, stacks = 2) {
+    constructor(scene) {
         super(scene);
-        this.slices = slices;
-        this.stacks = stacks;
-        
+
+        this.sphere = new MySphere(this.scene, 16, 16);
+        this.cilinder = new MyCilinder(this.scene, 16);
+        this.rudder = new MyRudder(this.scene);
+
+        this.lastT = 0;
+
         this.reset();
-        this.initBuffers();
     }
-    initBuffers() {
-        this.vertices = [];
-        this.indices = [];
-        this.normals = [];
 
-        var ang = 0;
-        var alphaAng = 2*Math.PI/this.slices;
+    onEngineChange(engine) {
+        if (engine == this.scene.DEFAULT_ENGINE) {
+            this.speed[0] = Math.sqrt(this.speed[0]**2 + this.speed[1]**2 + this.speed[2]**2);
+        }
+        else { // IMPROVED_ENGINE
+            this.speed[2] = this.speed[0] * Math.cos(this.curAngle);
+            this.speed[1] = 0;
+            this.speed[0] = this.speed[0] * Math.sin(this.curAngle);
+        }
+    }
 
-        for(var i = 0; i < this.slices; i++){
-            // All vertices have to be declared for a given face
-            // even if they are shared with others, as the normals 
-            // in each face will be different
+    update(t) {
 
-            var sa=Math.sin(ang);
-            var saa=Math.sin(ang+alphaAng);
-            var ca=Math.cos(ang);
-            var caa=Math.cos(ang+alphaAng);
+        if (this.lastT == 0)
+            this.deltaTime = 50; // Default time between calls
+        else
+            this.deltaTime = this.lastT - t;
+        this.lastT = t;
 
-            this.vertices.push(0,1,0);
-            this.vertices.push(ca, 0, -sa);
-            this.vertices.push(caa, 0, -saa);
 
-            // triangle normal computed by cross product of two edges
-            var normal= [
-                saa-sa,
-                ca*saa-sa*caa,
-                caa-ca
-            ];
 
-            // normalization
-            var nsize=Math.sqrt(
-                normal[0]*normal[0]+
-                normal[1]*normal[1]+
-                normal[2]*normal[2]
-                );
-            normal[0]/=nsize;
-            normal[1]/=nsize;
-            normal[2]/=nsize;
-
-            // push normal once for each vertex of this triangle
-            this.normals.push(...normal);
-            this.normals.push(...normal);
-            this.normals.push(...normal);
-
-            this.indices.push(3*i, (3*i+1) , (3*i+2) );
-
-            ang+=alphaAng;
+        if (this.scene.engineVersion == this.scene.DEFAULT_ENGINE) {
+            this.rotorAngle += this.speed[0] * 0.5;
+        }
+        else {
+            if (this.thrusting > 0)
+                this.rotorAngle += 0.4 * this.scene.speedFactor;
+            else if (this.thrusting < 0)
+                this.rotorAngle -= 0.4 * this.scene.speedFactor;
         }
 
-        this.primitiveType = this.scene.gl.TRIANGLES;
-        this.initGLBuffers();
-    }
-    
-    updateBuffers(complexity){
-        this.slices = 3 + Math.round(9 * complexity); //complexity varies 0-1, so slices varies 3-12
+        if (this.turning > 0)
+            this.rudderAngle = -0.3 * this.scene.turnRadius;
+        else if (this.turning < 0)
+            this.rudderAngle = 0.3 * this.scene.turnRadius;
+        else
+            this.rudderAngle = 0;
 
-        // reinitialize buffers
-        this.initBuffers();
-        this.initNormalVizBuffers();
-    }
+        if (this.scene.engineVersion == this.scene.DEFAULT_ENGINE) {
+            this.position[0] += this.speed[0] * Math.sin(this.curAngle);
+            this.position[2] += this.speed[0] * Math.cos(this.curAngle);
+        }
+        else {
+            this.position[0] += this.speed[0];
+            this.position[2] += this.speed[2];
 
-    update() {
-        this.position[0] += this.speed[0];
-        this.position[2] += this.speed[2];
+            this.speed[0] *= 0.95;
+            this.speed[2] *= 0.95;
+        }
 
-        this.speed[0] *= 0.95;
-        this.speed[2] *= 0.95;
+        this.thrusting = 0;
+        this.turning = 0;
     }
 
     turn(val) {
+        this.turning = val;
         this.curAngle += val;
     }
 
     accelerate(val) {
-        this.speed[0] += Math.sin(this.curAngle) * val;
-        this.speed[2] += Math.cos(this.curAngle) * val;
+        this.thrusting = val;
+        if (this.scene.engineVersion == this.scene.DEFAULT_ENGINE) {
+            this.speed[0] += val;
+        }
+        else {
+            this.speed[0] += Math.sin(this.curAngle) * val;
+            this.speed[2] += Math.cos(this.curAngle) * val;
+        }
     }
 
     reset() {
+        // Physics
         this.curAngle = 0;
         this.speed = [0, 0, 0];
-        this.position = [0, 0, 0];
+        this.position = [0, 10, 0];
+
+        // Display
+        this.thrusting = 0;
+        this.rotorAngle = 0;
+        this.turning = 0;
+        this.rudderAngle = 0;
+    }
+
+    displayRudders() {
+        var separation = 0.15;
+        // Top
+        this.scene.pushMatrix();
+        this.scene.translate(0, separation, -1.5);
+        this.scene.rotate(this.rudderAngle, 0, 1, 0);
+        this.rudder.display();
+        this.scene.popMatrix();
+
+        // Bottom
+        this.scene.pushMatrix();
+        this.scene.translate(0, -separation, -1.5);
+        this.scene.rotate(this.rudderAngle, 0, 1, 0);
+        this.scene.rotate(Math.PI, 0, 0, 1);
+        this.rudder.display();
+        this.scene.popMatrix();
+
+        // Right
+        this.scene.pushMatrix();
+        this.scene.translate(separation, 0, -1.5);
+        this.scene.rotate(-Math.PI / 2, 0, 0, 1);
+        this.rudder.display();
+        this.scene.popMatrix();
+
+        // Left
+        this.scene.pushMatrix();
+        this.scene.translate(-separation, 0, -1.5);
+        this.scene.rotate(Math.PI / 2, 0, 0, 1);
+        this.rudder.display();
+        this.scene.popMatrix();
+    }
+
+    displayHull(){
+        this.scene.pushMatrix();
+        this.scene.translate(0, 0.15, 0);
+        this.scene.pushMatrix();
+        this.scene.scale(0.85, 0.85, 2);
+        this.sphere.display();
+        this.scene.popMatrix();
+        this.displayRudders();
+        this.scene.popMatrix();
+    }
+
+    displayPropeller(){
+        this.scene.pushMatrix();
+        this.scene.scale(0.08, 0.08, 0.2);
+        this.sphere.display();
+        this.scene.popMatrix();
+        this.scene.pushMatrix();
+        this.scene.translate(0, 0, -0.23);
+        this.scene.rotate(this.rotorAngle, 0, 0, 1);
+        this.scene.scale(0.01, 0.12, 0.03);
+        this.sphere.display();
+        this.scene.popMatrix();
+    }
+
+    displayDeck(){
+        
+        // TODO: Refactor this
+        this.scene.pushMatrix();
+        this.scene.translate(0, -0.75, -0.6);
+        this.scene.rotate(Math.PI / 2, 1, 0, 0);
+        this.scene.scale(0.25, 1.4, 0.25);
+        this.cilinder.display();
+        this.scene.popMatrix();
+
+        this.scene.pushMatrix();
+        
+        this.scene.translate(0, -0.75, 0);
+        this.scene.pushMatrix();
+        this.scene.translate(0, 0, -0.6);
+        this.scene.scale(0.25, 0.25, 0.25);
+        this.sphere.display();
+        this.scene.popMatrix();
+        this.scene.pushMatrix();
+        this.scene.translate(0, 0, 0.8);
+        this.scene.scale(0.25, 0.25, 0.25);
+        this.sphere.display();
+        this.scene.popMatrix();
+
+        this.scene.popMatrix();
+
+        // Proppellers
+        this.scene.pushMatrix();
+        this.scene.translate(0.3, -0.85, -0.65);
+        this.displayPropeller();
+        this.scene.popMatrix();
+        this.scene.pushMatrix();
+        this.scene.translate(-0.3, -0.85, -0.65);
+        this.displayPropeller();
+        this.scene.popMatrix();
+        // End propellers
     }
 
     display(){
@@ -101,11 +198,13 @@ class MyVehicle extends CGFobject {
         // Begin Movement
         this.scene.translate(...this.position);
         this.scene.rotate(this.curAngle, 0, 1, 0);
-        
         // End Movement
-        this.scene.translate(0, 0, -0.5);
-        this.scene.rotate(Math.PI / 2, 1, 0, 0);
-        super.display();
+        
+        // Main display starts
+        this.displayHull();
+        this.displayDeck();
+        // Main display ends
+
         this.scene.popMatrix();
     }
     
