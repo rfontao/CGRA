@@ -27,9 +27,9 @@ class MyScene extends CGFscene {
         this.axis = new CGFaxis(this);
         this.sphere = new MySphere(this, 16, 8);
         this.cilinder = new MyCilinder(this, 16);
-        this.cubemap = new MyUnitCube(this);
+        this.cubemap = new MyUnitCube(this, 50);
         this.vehicle = new MyVehicle(this);
-        this.plane = new MyPlane(this, 16);
+        this.plane = new MyPlane(this, 50, 16);
 
         // Shaders
         this.terrainMapIndex = 2;

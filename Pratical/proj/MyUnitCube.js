@@ -4,12 +4,12 @@
  * @param scene - Reference to MyScene object
  */
 class MyUnitCube extends CGFobject {
-	constructor(scene) {
+	constructor(scene, size) {
 		super(scene);
-		this.initBuffers();
+        this.size = size;
+        this.initBuffers();
 	}
     
-    // TODO: Passar a ser MyCubemap e ter tamanho 50, com a normal normalizada
     // Fazer rotate de 90º para dar fix ao "front"
     
 	initBuffers() {
@@ -19,12 +19,8 @@ class MyUnitCube extends CGFobject {
         this.indices = [];
         this.texCoords = [];
 
-        // Not quite a unit cube, this is now a cubemap
-        // This was done so that scale wouldn't scale our normals so much
-        // and make the cubemap's lighting so odd
-        // unit cube: dist = 0.5
-        // cubemap: dist = 25
-        var dist = 25;
+        // This is now a "variableSizeUnitCube" :D
+        var dist = this.size * 0.5;
 
         for (let i = 0; i < 6; i++) {
 

@@ -1,12 +1,12 @@
 
 /** Represents a plane with nrDivs divisions along both axis, with center at (0,0) */
 class MyPlane extends CGFobject{
-	constructor(scene, nrDivs, minS, maxS, minT, maxT) {
+	constructor(scene, size, nrDivs) {
 		super(scene);
 		// nrDivs = 1 if not provided
 		nrDivs = typeof nrDivs !== 'undefined' ? nrDivs : 1;
 		this.nrDivs = nrDivs;
-		this.size = 50.0;
+		this.size = size;
 		this.patchLength = this.size / nrDivs;
 		this.texStep = 1.0 / this.nrDivs;
 		
