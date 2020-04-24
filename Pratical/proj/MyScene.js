@@ -57,7 +57,7 @@ class MyScene extends CGFscene {
 
         this.DEFAULT_ENGINE = 0;
         this.IMPROVED_ENGINE = 1;
-        this.engineVersion = 1;
+        this.engineVersion = 0;
         this.engineVersions = {
             "Default engine": 0,
             "Improved engine": 1
@@ -100,33 +100,36 @@ class MyScene extends CGFscene {
 
     // called periodically (as per setUpdatePeriod() in init())
     update(t){
-        //To be done...
         this.checkKeys();
-
+        this.gui.updateKeyDowns();
         this.vehicle.update(t);
     }
 
     checkKeys() {
 
-        // Check for key codes e.g. in https://ketcode.info/
-        if (this.gui.isKeyPressed("KeyW")) {
-            this.vehicle.accelerate(0.04 * this.speedFactor);
+        // Check for key codes e.g. in https://keycode.info/
+        if (this.gui.getKey("KeyW")) {
+            this.vehicle.accelerate(0.3 * this.speedFactor);
         }
 
-        if (this.gui.isKeyPressed("KeyS")) {
-            this.vehicle.accelerate(-0.025 * this.speedFactor);
+        if (this.gui.getKey("KeyS")) {
+            this.vehicle.accelerate(0.2 * -this.speedFactor);
         }
 
-        if (this.gui.isKeyPressed("KeyA")) {
-            this.vehicle.turn(0.1 * this.turnRadius);
+        if (this.gui.getKey("KeyA")) {
+            this.vehicle.turn(this.turnRadius);
         }
 
-        if (this.gui.isKeyPressed("KeyD")) {
-            this.vehicle.turn(-0.1 * this.turnRadius);
+        if (this.gui.getKey("KeyD")) {
+            this.vehicle.turn(-this.turnRadius);
         }
 
-        if (this.gui.isKeyPressed("KeyR")) {
+        if (this.gui.getKey("KeyR")) {
             this.vehicle.reset();
+        }
+
+        if (this.gui.getKeyDown("KeyP")) {
+            this.vehicle.toggleAutoPilot();
         }
 
     }
@@ -147,6 +150,7 @@ class MyScene extends CGFscene {
             this.axis.display();
 
         this.setDefaultAppearance();
+        this.activeTexture = null;
 
         // ---- BEGIN Primitive drawing section
 

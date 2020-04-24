@@ -40,22 +40,37 @@ class MyInterface extends CGFinterface {
 
         // create a named array (aka a dictionary? you dumb dumb) to store wich keys are being pressed
         this.activeKeys={};
+        this.activeKeysDown={};
+    }
+
+    updateKeyDowns() {
+        for (var key in this.activeKeysDown) {
+            this.activeKeysDown[key] = false;
+        }
     }
 
     processKeyDown(event) {
         // called when a key is pressed down
         // mark it as active in the array
-        this.activeKeys[event.code]=true;
+        if (!this.activeKeys[event.code] || false) {
+            this.activeKeysDown[event.code] = true;
+        }
+        this.activeKeys[event.code] = true;
     }
 
     processKeyUp(event) {
         // called when a key is released, mark it as inactive in the array
-        this.activeKeys[event.code]=false;
+        this.activeKeys[event.code] = false;
     }
 
-    isKeyPressed(keyCode) {
+    getKey(keyCode) {
         // returns true if a key is marked as pressed, false otherwise
         return this.activeKeys[keyCode] || false;
+    }
+
+    getKeyDown(keyCode) {
+        // returns true if a key started getting pressed this update cycle, false otherwise
+        return this.activeKeysDown[keyCode] || false;
     }
 
 }

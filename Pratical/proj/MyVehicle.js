@@ -12,6 +12,11 @@ class MyVehicle extends CGFobject {
 
         this.lastT = 0;
 
+        this.hullAppearance = new CGFappearance(this.scene);
+        this.hullAppearance.loadTexture("images/blimp.png");
+
+        this.autoPilotEnabled = false;
+
         this.reset();
     }
 
@@ -26,38 +31,80 @@ class MyVehicle extends CGFobject {
         }
     }
 
+    autoPilot() {
+        // These numbers come from the equations of Circular Motion
+        // All praise Villate and FIS1: https://def.fe.up.pt/dinamica/movimento_curvilineo.html
+        this.acceleration = 0;
+        this.turned = (Math.PI * 2.0 / 5.0);
+        this.speed[0] = this.turned * 5 * this.deltaTime;
+    }
+
+    toggleAutoPilot() {
+        this.autoPilotEnabled = !this.autoPilotEnabled;
+    }
+
+    lerp(v0, v1, t) {
+        return (1 - t) * v0 + t * v1;
+    }
+
+    clamp(value, min, max) {
+        return Math.max(min, Math.min(value, max));
+    }
+
     update(t) {
 
+        // Deltatime is normalized to seconds
         if (this.lastT == 0)
-            this.deltaTime = 50; // Default time between calls
+            this.deltaTime = 50 / 1000; // Default time between calls
         else
-            this.deltaTime = this.lastT - t;
+            this.deltaTime = (t - this.lastT) / 1000;
         this.lastT = t;
 
+        // This overrides all inputs, so the rest of the logic is sound
+        // we only need to give it the theoretical values to keep itself going
+        if (this.autoPilotEnabled)
+            this.autoPilot(t);
 
-
+        // Animate rotors
         if (this.scene.engineVersion == this.scene.DEFAULT_ENGINE) {
             this.rotorAngle += this.speed[0] * 0.5;
         }
         else {
-            if (this.thrusting > 0)
+            // TODO: Make this one smooth, but not that important
+            if (this.acceleration > 0)
                 this.rotorAngle += 0.4 * this.scene.speedFactor;
-            else if (this.thrusting < 0)
+            else if (this.acceleration < 0)
                 this.rotorAngle -= 0.4 * this.scene.speedFactor;
         }
 
-        if (this.turning > 0)
-            this.rudderAngle = -0.3 * this.scene.turnRadius;
-        else if (this.turning < 0)
-            this.rudderAngle = 0.3 * this.scene.turnRadius;
+        // Animate Rudders
+        if (this.turned > 0)
+            this.rudderAngle = this.lerp(this.rudderAngle, -0.25 * this.scene.turnRadius, this.clamp(this.deltaTime * 3, 0, 1));
+        else if (this.turned < 0)
+            this.rudderAngle = this.lerp(this.rudderAngle, 0.25 * this.scene.turnRadius, this.clamp(this.deltaTime * 3, 0, 1));
         else
-            this.rudderAngle = 0;
+            this.rudderAngle = this.lerp(this.rudderAngle, 0, this.clamp(this.deltaTime * 3, 0, 1));
 
+        // Apply deltatime
+        this.acceleration *= this.deltaTime;
+        this.turned *= this.deltaTime;
+        this.curAngle += this.turned;
+        
+        // Adjust position
         if (this.scene.engineVersion == this.scene.DEFAULT_ENGINE) {
+            this.speed[0] += this.acceleration;
+            this.speed[0] = Math.max(0, this.speed[0]);
+
             this.position[0] += this.speed[0] * Math.sin(this.curAngle);
             this.position[2] += this.speed[0] * Math.cos(this.curAngle);
         }
         else {
+            this.speed[0] += this.acceleration * Math.sin(this.curAngle);
+            this.speed[2] += this.acceleration * Math.cos(this.curAngle);
+
+            this.speed[0] = Math.max(-0.02 * this.scene.speedFactor, this.speed[0]);
+            this.speed[2] = Math.max(-0.02 * this.scene.speedFactor, this.speed[2]);
+
             this.position[0] += this.speed[0];
             this.position[2] += this.speed[2];
 
@@ -65,24 +112,17 @@ class MyVehicle extends CGFobject {
             this.speed[2] *= 0.95;
         }
 
-        this.thrusting = 0;
-        this.turning = 0;
+        // Reset inputs (in auto-pilot it doesn't matter anyway xD)
+        this.acceleration = 0;
+        this.turned = 0;
     }
 
     turn(val) {
-        this.turning = val;
-        this.curAngle += val;
+        this.turned = val;
     }
 
     accelerate(val) {
-        this.thrusting = val;
-        if (this.scene.engineVersion == this.scene.DEFAULT_ENGINE) {
-            this.speed[0] += val;
-        }
-        else {
-            this.speed[0] += Math.sin(this.curAngle) * val;
-            this.speed[2] += Math.cos(this.curAngle) * val;
-        }
+        this.acceleration = val;
     }
 
     reset() {
@@ -90,6 +130,10 @@ class MyVehicle extends CGFobject {
         this.curAngle = 0;
         this.speed = [0, 0, 0];
         this.position = [0, 10, 0];
+
+        // Inputs (and physics)
+        this.acceleration = 0;
+        this.turned = 0;
 
         // Display
         this.thrusting = 0;
@@ -131,6 +175,8 @@ class MyVehicle extends CGFobject {
     }
 
     displayHull(){
+        this.hullAppearance.apply();
+
         this.scene.pushMatrix();
         this.scene.translate(0, 0.15, 0);
         this.scene.pushMatrix();
