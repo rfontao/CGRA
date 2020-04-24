@@ -160,11 +160,8 @@ class MyScene extends CGFscene {
         this.vehicle.display();
 
         // Cubemap
-        this.pushMatrix();
-        this.scale(50, 50, 50);
         this.cubemapAppearance.apply();
         this.cubemap.display();
-        this.popMatrix();
 
         this.popMatrix();
 

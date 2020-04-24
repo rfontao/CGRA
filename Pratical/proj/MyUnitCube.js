@@ -19,7 +19,12 @@ class MyUnitCube extends CGFobject {
         this.indices = [];
         this.texCoords = [];
 
-        var dist = 0.5;
+        // Not quite a unit cube, this is now a cubemap
+        // This was done so that scale wouldn't scale our normals so much
+        // and make the cubemap's lighting so odd
+        // unit cube: dist = 0.5
+        // cubemap: dist = 25
+        var dist = 25;
 
         for (let i = 0; i < 6; i++) {
 
