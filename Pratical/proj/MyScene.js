@@ -29,11 +29,19 @@ class MyScene extends CGFscene {
         this.cilinder = new MyCilinder(this, 16);
         this.cubemap = new MyUnitCube(this);
         this.vehicle = new MyVehicle(this);
+        this.plane = new MyPlane(this, 16);
+
+        // Shaders
+        this.terrainMapIndex = 2;
+        this.terrainShader = new CGFshader(this.gl, "shaders/terrain.vert", "shaders/terrain.frag");
+        this.terrainShader.setUniformsValues({ uSampler2: this.terrainMapIndex });
 
         // Initialize textures (and appearances)
-        this.earthTexture = new CGFtexture(this, "images/earth.jpg");
-        this.earthAppearance = new CGFappearance(this);
-        this.earthAppearance.setTexture(this.earthTexture);
+        this.earthAppearance = new CGFappearance(this).loadTexture("images/earth.jpg");
+
+        this.terrainAppearance = new CGFappearance(this);
+        this.terrainAppearance.loadTexture("images/terrain.jpg");
+        this.terrainHeightMap = new CGFtexture(this, "images/terrain_heightmap.jpg");
 
         this.cubemapFilenames = [
             "images/skybox/cubemap.png",
@@ -156,6 +164,15 @@ class MyScene extends CGFscene {
 
         this.pushMatrix();
         this.scale(this.scaleFactor,this.scaleFactor,this.scaleFactor);
+
+        this.pushMatrix();
+        this.setActiveShader(this.terrainShader);
+        this.terrainAppearance.apply();
+        this.terrainHeightMap.bind(this.terrainMapIndex);
+        this.rotate(Math.PI / 2, -1, 0, 0);
+        this.plane.display();
+        this.popMatrix();
+        this.setActiveShader(this.defaultShader);
 
         this.vehicle.display();
 

@@ -13,7 +13,7 @@ class MyVehicle extends CGFobject {
         this.lastT = 0;
 
         this.hullAppearance = new CGFappearance(this.scene);
-        this.hullAppearance.loadTexture("images/blimp.png");
+        this.hullAppearance.loadTexture("images/testMap.jpg");
 
         this.autoPilotEnabled = false;
 
