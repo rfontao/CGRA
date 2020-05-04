@@ -24,7 +24,7 @@ class MyCilinder extends CGFobject {
   
       var theta = 0;
       var thetaInc = (2 * Math.PI) / this.slices;
-      var verts = this.slices + 1;
+      var verts = this.slices;
 
       var tex_s = 1;
       var texInc = 1 / this.slices;

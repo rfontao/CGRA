@@ -6,14 +6,32 @@ class MyVehicle extends CGFobject {
     constructor(scene) {
         super(scene);
 
-        this.sphere = new MySphere(this.scene, 16, 16);
-        this.cilinder = new MyCilinder(this.scene, 16);
+        this.sphere = new MySphere(this.scene, 20, 20);
+        this.cilinder = new MyCilinder(this.scene, 20);
         this.rudder = new MyRudder(this.scene);
 
         this.lastT = 0;
 
         this.hullAppearance = new CGFappearance(this.scene);
-        this.hullAppearance.loadTexture("images/testMap.jpg");
+        this.hullAppearance.loadTexture("images/zepellin_balloon.png");
+
+        this.testAppearance = new CGFappearance(this.scene);
+        this.testAppearance.loadTexture("images/testMap.jpg");
+
+        this.rudderAppearance = new CGFappearance(this.scene);
+        this.rudderAppearance.loadTexture("images/rudder.png");
+
+        this.mainGondolaAppearance = new CGFappearance(this.scene);
+        this.mainGondolaAppearance.loadTexture("images/gondola_main.png");
+
+        this.topsGondolaAppearance = new CGFappearance(this.scene);
+        this.topsGondolaAppearance.loadTexture("images/gondola_tops.png");
+
+        this.rotorAppearance = new CGFappearance(this.scene);
+        this.rotorAppearance.loadTexture("images/rotor.png");
+
+        this.rotorBladeAppearance = new CGFappearance(this.scene);
+        this.rotorBladeAppearance.loadTexture("images/rotor_blade.png");
 
         this.autoPilotEnabled = false;
 
@@ -143,6 +161,8 @@ class MyVehicle extends CGFobject {
     }
 
     displayRudders() {
+        this.rudderAppearance.apply();
+
         var separation = 0.15;
         // Top
         this.scene.pushMatrix();
@@ -189,10 +209,12 @@ class MyVehicle extends CGFobject {
 
     displaySinglePropeller(){
         this.scene.pushMatrix();
+        this.rotorAppearance.apply();
         this.scene.scale(0.08, 0.08, 0.2);
         this.sphere.display();
         this.scene.popMatrix();
         this.scene.pushMatrix();
+        this.rotorBladeAppearance.apply();
         this.scene.translate(0, 0, -0.23);
         this.scene.rotate(this.rotorAngle, 0, 0, 1);
         this.scene.scale(0.01, 0.12, 0.03);
@@ -202,17 +224,18 @@ class MyVehicle extends CGFobject {
 
     displayPropellers() {
         this.scene.pushMatrix();
-        this.scene.translate(0.3, -0.15, -0.65);
+        this.scene.translate(0.275, -0.15, -0.65);
         this.displaySinglePropeller();
         this.scene.popMatrix();
         this.scene.pushMatrix();
-        this.scene.translate(-0.3, -0.15, -0.65);
+        this.scene.translate(-0.275, -0.15, -0.65);
         this.displaySinglePropeller();
         this.scene.popMatrix();
     }
 
     displayGondola() {
         // Cilinder
+        this.mainGondolaAppearance.apply();
         this.scene.pushMatrix();
         this.scene.translate(0, 0, -0.6);
         this.scene.rotate(Math.PI / 2, 1, 0, 0);
@@ -220,17 +243,19 @@ class MyVehicle extends CGFobject {
         this.cilinder.display();
         this.scene.popMatrix();
         
+        this.topsGondolaAppearance.apply();
+
         // Sphere 1
         this.scene.pushMatrix();
-        this.scene.translate(0, 0, -0.6);
-        this.scene.scale(0.25, 0.25, 0.25);
+        this.scene.translate(0, 0, -0.55);
+        this.scene.scale(0.246, 0.246, 0.246);
         this.sphere.display();
         this.scene.popMatrix();
         
         // Sphere 2
         this.scene.pushMatrix();
-        this.scene.translate(0, 0, 0.8);
-        this.scene.scale(0.25, 0.25, 0.25);
+        this.scene.translate(0, 0, 0.75);
+        this.scene.scale(0.246, 0.246, 0.246);
         this.sphere.display();
         this.scene.popMatrix();
     }
@@ -238,7 +263,7 @@ class MyVehicle extends CGFobject {
     displayDeck(){
         this.scene.pushMatrix();
         this.scene.translate(0, -0.75, 0);
-
+        this.testAppearance.apply();
         this.displayGondola();
         this.displayPropellers();
 
