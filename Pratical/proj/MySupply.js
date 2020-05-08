@@ -1,5 +1,5 @@
 const SupplyStates =  {      INACTIVE: 0,      FALLING: 1,      LANDED: 2  };
-const inactivePos = [0, -100000, 0]
+const inactivePos = [0, 0, 0]
 const finalHeight = 0.5;
 const fallTime = 3;
 const dropHeightOffset = -1;
@@ -37,11 +37,13 @@ class MySupply extends MyUnitCubeQuad {
     }
 
     display() {
-        this.scene.pushMatrix();
-        this.scene.translate(...this.position);
-        this.scene.rotate(this.angle, 0, 1, 0);
-        super.display();
-        this.scene.popMatrix();
+        if (this.state != SupplyStates.INACTIVE) {
+            this.scene.pushMatrix();
+            this.scene.translate(...this.position);
+            this.scene.rotate(this.angle, 0, 1, 0);
+            super.display();
+            this.scene.popMatrix();
+        }
     }
     
     update(t) {
@@ -51,6 +53,7 @@ class MySupply extends MyUnitCubeQuad {
             this.position[1] = Math.max(finalHeight, this.position[1] - this.fallSpeed * this.deltaTime);
             if (this.position[1] == finalHeight) {
                 this.state = SupplyStates.LANDED;
+                this.scene.nSuppliesDelivered++;
             }
         }
     }

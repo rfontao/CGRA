@@ -34,6 +34,7 @@ class MyScene extends CGFscene {
         this.cubemap = new MyUnitCube(this, 50);
         this.vehicle = new MyVehicle(this);
         this.plane = new MyPlane(this, 50, 16);
+        this.billboard = new MyBillboard(this, [-8, 0, -8], Math.PI / 4);
 
         this.totalSupplies = 5;
         this.nSuppliesDelivered = 0;
@@ -135,6 +136,10 @@ class MyScene extends CGFscene {
         });
     }
 
+    getSupplyPercentage() {
+        return this.nSuppliesDelivered / this.totalSupplies;
+    }
+
     dropSupply() {
         for (let i = 0; i < this.supplies.length; i++) {
             if (this.supplies[i].isAvailable()) {
@@ -213,6 +218,8 @@ class MyScene extends CGFscene {
         this.setActiveShader(this.defaultShader);
 
         this.vehicle.display();
+
+        this.billboard.display();
 
         this.supplies.forEach(supply => {
             supply.display();
