@@ -31,7 +31,7 @@ class MyVehicle extends CGFobject {
         this.rotorAppearance.loadTexture("images/rotor.png");
 
         this.rotorBladeAppearance = new CGFappearance(this.scene);
-        this.rotorBladeAppearance.loadTexture("images/rotor_blade.png");
+        this.rotorBladeAppearance.loadTexture("images/roto_blade.png");
 
         this.autoPilotEnabled = false;
 
