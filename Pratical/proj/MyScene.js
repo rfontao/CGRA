@@ -11,6 +11,10 @@ class MyScene extends CGFscene {
         this.initCameras();
         this.initLights();
 
+        // Deltatime
+        this.lastT = 0;
+        this.deltaTime = 50; // Update period
+
         //Background color
         this.gl.clearColor(0.0, 0.0, 0.0, 1.0);
 
@@ -30,6 +34,13 @@ class MyScene extends CGFscene {
         this.cubemap = new MyUnitCube(this, 50);
         this.vehicle = new MyVehicle(this);
         this.plane = new MyPlane(this, 50, 16);
+
+        this.totalSupplies = 5;
+        this.nSuppliesDelivered = 0;
+        this.supplies = []
+        for (let i = 0; i < this.totalSupplies; i++) {
+            this.supplies.push(new MySupply(this));
+        }
 
         // Shaders
         this.terrainMapIndex = 2;
@@ -108,9 +119,29 @@ class MyScene extends CGFscene {
 
     // called periodically (as per setUpdatePeriod() in init())
     update(t){
+
+        // Deltatime is normalized to seconds
+        if (this.lastT == 0)
+            this.deltaTime = 50 / 1000; // Default time between calls
+        else
+            this.deltaTime = (t - this.lastT) / 1000;
+        this.lastT = t;
+
         this.checkKeys();
         this.gui.updateKeyDowns();
-        this.vehicle.update(t);
+        this.vehicle.update(this.deltaTime);
+        this.supplies.forEach(supply => {
+            supply.update(this.deltaTime);
+        });
+    }
+
+    dropSupply() {
+        for (let i = 0; i < this.supplies.length; i++) {
+            if (this.supplies[i].isAvailable()) {
+                this.supplies[i].drop(this.vehicle.getPosition().slice(), this.vehicle.getAngle());
+                break;
+            }
+        }
     }
 
     checkKeys() {
@@ -132,12 +163,19 @@ class MyScene extends CGFscene {
             this.vehicle.turn(-this.turnRadius);
         }
 
-        if (this.gui.getKey("KeyR")) {
-            this.vehicle.reset();
-        }
-
         if (this.gui.getKeyDown("KeyP")) {
             this.vehicle.toggleAutoPilot();
+        }
+
+        if (this.gui.getKeyDown("KeyL")) {
+            this.dropSupply();
+        }
+
+        if (this.gui.getKey("KeyR")) {
+            this.vehicle.reset();
+            this.supplies.forEach(supply => {
+                supply.reset();
+            });
         }
 
     }
@@ -175,6 +213,10 @@ class MyScene extends CGFscene {
         this.setActiveShader(this.defaultShader);
 
         this.vehicle.display();
+
+        this.supplies.forEach(supply => {
+            supply.display();
+        });
 
         // Cubemap
         this.cubemapAppearance.apply();

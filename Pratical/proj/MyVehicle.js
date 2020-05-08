@@ -6,11 +6,11 @@ class MyVehicle extends CGFobject {
     constructor(scene) {
         super(scene);
 
+        this.deltaTime = 50;
+
         this.sphere = new MySphere(this.scene, 20, 20);
         this.cilinder = new MyCilinder(this.scene, 20);
         this.rudder = new MyRudder(this.scene);
-
-        this.lastT = 0;
 
         this.hullAppearance = new CGFappearance(this.scene);
         this.hullAppearance.loadTexture("images/zepellin_balloon.png");
@@ -36,6 +36,14 @@ class MyVehicle extends CGFobject {
         this.autoPilotEnabled = false;
 
         this.reset();
+    }
+
+    getPosition() {
+        return this.position;
+    }
+
+    getAngle() {
+        return this.curAngle;
     }
 
     onEngineChange(engine) {
@@ -71,12 +79,7 @@ class MyVehicle extends CGFobject {
 
     update(t) {
 
-        // Deltatime is normalized to seconds
-        if (this.lastT == 0)
-            this.deltaTime = 50 / 1000; // Default time between calls
-        else
-            this.deltaTime = (t - this.lastT) / 1000;
-        this.lastT = t;
+        this.deltaTime = t;
 
         // This overrides all inputs, so the rest of the logic is sound
         // we only need to give it the theoretical values to keep itself going
