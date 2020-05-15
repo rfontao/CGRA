@@ -11,6 +11,7 @@ class MyVehicle extends CGFobject {
         this.sphere = new MySphere(this.scene, 20, 20);
         this.cilinder = new MyCilinder(this.scene, 20);
         this.rudder = new MyRudder(this.scene);
+        this.doublePlane = new MyDoubleSidedPlane(this.scene, 1, 30);
 
         this.hullAppearance = new CGFappearance(this.scene);
         this.hullAppearance.loadTexture("images/zepellin_balloon.png");
@@ -32,6 +33,13 @@ class MyVehicle extends CGFobject {
 
         this.rotorBladeAppearance = new CGFappearance(this.scene);
         this.rotorBladeAppearance.loadTexture("images/roto_blade.png");
+
+        this.flagAppearance = new CGFappearance(this.scene);
+        this.flagAppearance.loadTexture("images/bioshock_columbia_flag.jpg");
+
+        this.phase = 0.0;
+        this.flagShader = new CGFshader(this.scene.gl, "shaders/flag.vert", "shaders/flag.frag");
+        this.flagShader.setUniformsValues({ timeFactor: this.phase });
 
         this.autoPilotEnabled = false;
 
@@ -80,6 +88,7 @@ class MyVehicle extends CGFobject {
     update(t) {
 
         this.deltaTime = t;
+        this.phase += this.deltaTime;
 
         // This overrides all inputs, so the rest of the logic is sound
         // we only need to give it the theoretical values to keep itself going
@@ -118,6 +127,8 @@ class MyVehicle extends CGFobject {
 
             this.position[0] += this.speed[0] * Math.sin(this.curAngle);
             this.position[2] += this.speed[0] * Math.cos(this.curAngle);
+
+            this.phase += 2 * this.speed[0];
         }
         else {
             this.speed[0] += this.acceleration * Math.sin(this.curAngle);
@@ -129,9 +140,13 @@ class MyVehicle extends CGFobject {
             this.position[0] += this.speed[0];
             this.position[2] += this.speed[2];
 
+            this.phase += 2 * Math.sqrt(speed[0]**2 + speed[2]**2);
+
             this.speed[0] *= 0.95;
             this.speed[2] *= 0.95;
         }
+
+        this.flagShader.setUniformsValues({ timeFactor: this.phase });
 
         // Reset inputs (in auto-pilot it doesn't matter anyway xD)
         this.acceleration = 0;
@@ -161,6 +176,14 @@ class MyVehicle extends CGFobject {
         this.rotorAngle = 0;
         this.turning = 0;
         this.rudderAngle = 0;
+    }
+
+    displayFlag() {
+        this.flagAppearance.apply();
+        var oldShader = this.scene.activeShader;
+        this.scene.setActiveShader(this.flagShader);
+        this.doublePlane.display();
+        this.scene.setActiveShader(oldShader);
     }
 
     displayRudders() {
@@ -207,6 +230,13 @@ class MyVehicle extends CGFobject {
         this.sphere.display();
         this.scene.popMatrix();
         this.displayRudders();
+        this.scene.popMatrix();
+
+        this.scene.pushMatrix();
+        this.scene.translate(0, 0.15, -4.5);
+        this.scene.rotate(Math.PI / 2, 0, 1, 0);
+        this.scene.scale(2, 1, 1);
+        this.displayFlag();
         this.scene.popMatrix();
     }
 
