@@ -10,10 +10,13 @@ const dropHeightOffset = -1;
  * @param scene - Reference to MyScene object
  */
 class MySupply extends MyUnitCubeQuad {
+
+    static offset = 0.00;
+
 	constructor(scene) {
         super(scene);
         this.deltaTime = 50;
-        this.loadTextures(scene);
+        this.loadTextures();
         this.reset();
         this.initBuffers();
     }
@@ -23,7 +26,8 @@ class MySupply extends MyUnitCubeQuad {
         this.angle = 0;
         this.state = SupplyStates.INACTIVE;
         this.position = inactivePos;
-        this.setDroppingTextures();
+        this.offset = 0.00;
+        super.setTextures(...this.droppingTexture);
     }
  
     drop(position, orientation) {
@@ -32,6 +36,7 @@ class MySupply extends MyUnitCubeQuad {
         this.state = SupplyStates.FALLING;
         this.fallSpeed = (position[1] - finalHeight) / fallTime;
         this.position = position;
+        this.offset += 0.01;
     }
 
     isAvailable() {
@@ -39,7 +44,13 @@ class MySupply extends MyUnitCubeQuad {
     }
 
     display() {
-        if (this.state != SupplyStates.INACTIVE) {
+        if(this.state == SupplyStates.LANDED){
+            this.scene.pushMatrix();
+            this.scene.translate(...this.position);
+            this.scene.rotate(this.angle, 0, 1, 0);
+            super.displaySpread();
+            this.scene.popMatrix();
+        } else if (this.state != SupplyStates.INACTIVE) {
             this.scene.pushMatrix();
             this.scene.translate(...this.position);
             this.scene.rotate(this.angle, 0, 1, 0);
@@ -55,30 +66,21 @@ class MySupply extends MyUnitCubeQuad {
             this.position[1] = Math.max(finalHeight, this.position[1] - this.fallSpeed * this.deltaTime);
             if (this.position[1] == finalHeight) {
                 this.state = SupplyStates.LANDED;
-                this.setLandedTextures();
+                super.setTextures(...this.landedTexture);
                 this.scene.nSuppliesDelivered++;
             }
         }
     }
 
-    loadTextures(scene){
-        var sideMaterial = new CGFappearance(scene);
+    loadTextures(){
+        var sideMaterial = new CGFappearance(this.scene);
         sideMaterial.loadTexture('images/ApertureCubeSide.png');
 
         this.droppingTexture = [sideMaterial,sideMaterial,sideMaterial];
 
-        var sideMaterial = new CGFappearance(scene);
+        var sideMaterial = new CGFappearance(this.scene);
         sideMaterial.loadTexture('images/CompanionCubeSide.png');
 
         this.landedTexture = [sideMaterial,sideMaterial,sideMaterial];
     }
-
-    setDroppingTextures(){
-        super.setTextures(...this.droppingTexture);
-    }
-
-    setLandedTextures(){
-        super.setTextures(...this.landedTexture);
-    }
-
 }
