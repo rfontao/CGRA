@@ -11,7 +11,7 @@ const dropHeightOffset = -1;
  */
 class MySupply extends MyUnitCubeQuad {
 
-    static offset = 0.00;
+    static globalOffset = 0.00; //Used to prevent box clipping
 
 	constructor(scene) {
         super(scene);
@@ -36,7 +36,8 @@ class MySupply extends MyUnitCubeQuad {
         this.state = SupplyStates.FALLING;
         this.fallSpeed = (position[1] - finalHeight) / fallTime;
         this.position = position;
-        this.offset += 0.01;
+        MySupply.globalOffset += 0.01;
+        this.offset = MySupply.globalOffset;
     }
 
     isAvailable() {
@@ -48,6 +49,7 @@ class MySupply extends MyUnitCubeQuad {
             this.scene.pushMatrix();
             this.scene.translate(...this.position);
             this.scene.rotate(this.angle, 0, 1, 0);
+            this.scene.translate(0,this.offset,0);
             super.displaySpread();
             this.scene.popMatrix();
         } else if (this.state != SupplyStates.INACTIVE) {
