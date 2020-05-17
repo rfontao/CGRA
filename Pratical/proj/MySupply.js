@@ -13,8 +13,9 @@ class MySupply extends MyUnitCubeQuad {
 	constructor(scene) {
         super(scene);
         this.deltaTime = 50;
+        this.loadTextures(scene);
         this.reset();
-		this.initBuffers();
+        this.initBuffers();
     }
 
     reset() {
@@ -22,6 +23,7 @@ class MySupply extends MyUnitCubeQuad {
         this.angle = 0;
         this.state = SupplyStates.INACTIVE;
         this.position = inactivePos;
+        this.setDroppingTextures();
     }
  
     drop(position, orientation) {
@@ -53,9 +55,30 @@ class MySupply extends MyUnitCubeQuad {
             this.position[1] = Math.max(finalHeight, this.position[1] - this.fallSpeed * this.deltaTime);
             if (this.position[1] == finalHeight) {
                 this.state = SupplyStates.LANDED;
+                this.setLandedTextures();
                 this.scene.nSuppliesDelivered++;
             }
         }
+    }
+
+    loadTextures(scene){
+        var sideMaterial = new CGFappearance(scene);
+        sideMaterial.loadTexture('images/ApertureCubeSide.png');
+
+        this.droppingTexture = [sideMaterial,sideMaterial,sideMaterial];
+
+        var sideMaterial = new CGFappearance(scene);
+        sideMaterial.loadTexture('images/CompanionCubeSide.png');
+
+        this.landedTexture = [sideMaterial,sideMaterial,sideMaterial];
+    }
+
+    setDroppingTextures(){
+        super.setTextures(...this.droppingTexture);
+    }
+
+    setLandedTextures(){
+        super.setTextures(...this.landedTexture);
     }
 
 }
