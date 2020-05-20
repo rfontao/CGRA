@@ -12,6 +12,7 @@ class MyVehicle extends CGFobject {
         this.cilinder = new MyCilinder(this.scene, 20);
         this.rudder = new MyRudder(this.scene);
         this.doublePlane = new MyDoubleSidedPlane(this.scene, 1, 30);
+        this.doublePlaneLow = new MyDoubleSidedPlane(this.scene, 1, 2);
 
         this.hullAppearance = new CGFappearance(this.scene);
         this.hullAppearance.loadTexture("images/zepellin_balloon.png");
@@ -131,16 +132,13 @@ class MyVehicle extends CGFobject {
             this.phase += 2 * this.speed[0];
         }
         else {
-            this.speed[0] += this.acceleration * Math.sin(this.curAngle);
-            this.speed[2] += this.acceleration * Math.cos(this.curAngle);
-
-            this.speed[0] = Math.max(-0.02 * this.scene.speedFactor, this.speed[0]);
-            this.speed[2] = Math.max(-0.02 * this.scene.speedFactor, this.speed[2]);
+            this.speed[0] += 0.98 * this.scene.speedFactor * this.acceleration * Math.sin(this.curAngle);
+            this.speed[2] += 0.98 * this.scene.speedFactor * this.acceleration * Math.cos(this.curAngle);
 
             this.position[0] += this.speed[0];
             this.position[2] += this.speed[2];
 
-            this.phase += 2 * Math.sqrt(speed[0]**2 + speed[2]**2);
+            this.phase += 2 * Math.sqrt(this.speed[0]**2 + this.speed[2]**2);
 
             this.speed[0] *= 0.95;
             this.speed[2] *= 0.95;
@@ -166,6 +164,7 @@ class MyVehicle extends CGFobject {
         this.curAngle = 0;
         this.speed = [0, 0, 0];
         this.position = [0, 10, 0];
+        this.autoPilotEnabled = false;
 
         // Inputs (and physics)
         this.acceleration = 0;
@@ -179,17 +178,32 @@ class MyVehicle extends CGFobject {
     }
 
     displayFlag() {
+        this.scene.pushMatrix();
         this.flagAppearance.apply();
         var oldShader = this.scene.activeShader;
         this.scene.setActiveShader(this.flagShader);
+        this.scene.scale(2, 1, 1);
         this.doublePlane.display();
         this.scene.setActiveShader(oldShader);
+        this.scene.popMatrix();
+        
+        this.scene.activeTexture = null;
+        this.scene.pushMatrix();
+        this.scene.translate(-1.75, 0.2, 0);
+        this.scene.scale(1.5, 0.02, 0.02);
+        this.doublePlaneLow.display();
+        this.scene.popMatrix();
+        this.scene.pushMatrix();
+        this.scene.translate(-1.75, -0.2, 0);
+        this.scene.scale(1.5, 0.02, 0.02);
+        this.doublePlaneLow.display();
+        this.scene.popMatrix();
     }
 
     displayRudders() {
         this.rudderAppearance.apply();
 
-        var separation = 0.15;
+        var separation = 0.35;
         // Top
         this.scene.pushMatrix();
         this.scene.translate(0, separation, -1.5);
@@ -233,9 +247,9 @@ class MyVehicle extends CGFobject {
         this.scene.popMatrix();
 
         this.scene.pushMatrix();
-        this.scene.translate(0, 0.15, -4.5);
+        this.scene.rotate(this.rudderAngle / 2, 0, 1, 0);
+        this.scene.translate(0, 0.15, -4.2);
         this.scene.rotate(Math.PI / 2, 0, 1, 0);
-        this.scene.scale(2, 1, 1);
         this.displayFlag();
         this.scene.popMatrix();
     }

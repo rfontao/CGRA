@@ -181,6 +181,7 @@ class MyScene extends CGFscene {
             this.supplies.forEach(supply => {
                 supply.reset();
             });
+            this.nSuppliesDelivered = 0;
         }
 
     }
