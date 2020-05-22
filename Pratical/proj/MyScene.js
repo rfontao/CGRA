@@ -144,6 +144,7 @@ class MyScene extends CGFscene {
         for (let i = 0; i < this.supplies.length; i++) {
             if (this.supplies[i].isAvailable()) {
                 this.supplies[i].drop(this.vehicle.getPosition().slice(), this.vehicle.getAngle());
+                this.nSuppliesDelivered++;
                 break;
             }
         }
