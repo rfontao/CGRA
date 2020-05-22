@@ -154,11 +154,11 @@ class MyScene extends CGFscene {
 
         // Check for key codes e.g. in https://keycode.info/
         if (this.gui.getKey("KeyW")) {
-            this.vehicle.accelerate(0.3 * this.speedFactor);
+            this.vehicle.accelerate(0.3);
         }
 
         if (this.gui.getKey("KeyS")) {
-            this.vehicle.accelerate(0.2 * -this.speedFactor);
+            this.vehicle.accelerate(-0.2);
         }
 
         if (this.gui.getKey("KeyA")) {
