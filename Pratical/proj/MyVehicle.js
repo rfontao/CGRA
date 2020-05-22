@@ -98,7 +98,7 @@ class MyVehicle extends CGFobject {
 
         // Animate rotors
         if (this.scene.engineVersion == this.scene.DEFAULT_ENGINE) {
-            this.rotorAngle += this.speed[0] * 0.5;
+            this.rotorAngle += this.speed[0] * 0.75 + 0.05;
         }
         else {
             // TODO: Make this one smooth, but not that important
@@ -106,6 +106,8 @@ class MyVehicle extends CGFobject {
                 this.rotorAngle += 0.4 * this.scene.speedFactor;
             else if (this.acceleration < 0)
                 this.rotorAngle -= 0.4 * this.scene.speedFactor;
+            else
+                this.rotorAngle += 0.05;
         }
 
         // Animate Rudders
