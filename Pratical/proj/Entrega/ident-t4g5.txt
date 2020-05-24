@@ -1,0 +1,5 @@
+Turma 4 Grupo 5
+Ricardo Jorge Cruz Fontão - up201806317
+Tiago Duarte da Silva - up201806516
+-> Foi implementado tudo o que foi pedido. Foi também implementado um modo "melhorado" de físicas que pode ser ativado no gui.
+-> Os supplies herdam a rotação do airship quando são largadas e quando aterram tem um offset de altura para que não deem "clip" entre si.
