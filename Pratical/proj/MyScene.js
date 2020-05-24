@@ -49,8 +49,6 @@ class MyScene extends CGFscene {
         this.terrainShader.setUniformsValues({ uSampler2: this.terrainMapIndex });
 
         // Initialize textures (and appearances)
-        this.earthAppearance = new CGFappearance(this).loadTexture("images/earth.jpg");
-
         this.terrainAppearance = new CGFappearance(this);
         this.terrainAppearance.loadTexture("images/terrain.jpg");
         this.terrainHeightMap = new CGFtexture(this, "images/terrain_heightmap.jpg");
